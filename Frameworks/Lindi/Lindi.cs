@@ -24,6 +24,7 @@ using System.Linq;
 using Microsoft.Research.Naiad.Dataflow;
 using Microsoft.Research.Naiad.Dataflow.PartitionBy;
 using Microsoft.Research.Naiad.Dataflow.StandardVertices;
+using Microsoft.Research.Naiad.Frameworks.Reduction;
 using Microsoft.Research.Naiad.Utilities;
 using Microsoft.Research.Naiad.Dataflow.Iteration;
 using System.Linq.Expressions;
@@ -725,6 +726,19 @@ namespace Microsoft.Research.Naiad.Frameworks.Lindi
             if (valueSelector == null) throw new ArgumentNullException("valueSelector");
             return stream.Select(x => keySelector(x).PairWith(valueSelector(x)))
                          .Aggregate((a, b) => a.CompareTo(b) > 0 ? a : b, true);
+        }
+
+
+
+
+        public static Stream<Pair<TKey, Int64>, TTime> IntSum<TRecord, TKey, TTime>(this Stream<TRecord, TTime> stream, Func<TRecord, TKey> keySelector, Func<TRecord, Int64> valueSelector) where TTime : Time<TTime> {
+          return stream.Reduce<IntSumReducer, Int64, Int64, Int64, TKey, TRecord, TTime>(keySelector, valueSelector, () => new IntSumReducer(), "IntSum");
+        }
+
+        public static Stream<Pair<TKey, TValue>, TTime> GenericAggregator<TRecord, TKey, TValue, TTime>(this Stream<TRecord, TTime> stream, Func<TRecord, TKey> keySelector, Func<TRecord, TValue> valueSelector)
+          where TTime : Time<TTime>
+          where TValue : IAddable<TValue> {
+          return stream.Reduce<GenericReducer<TValue>, TValue, TValue, TValue, TKey, TRecord, TTime>(keySelector, valueSelector, () => new GenericReducer<TValue>(), "GenericReducer");
         }
 
         /// <summary>
