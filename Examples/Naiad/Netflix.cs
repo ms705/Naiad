@@ -295,7 +295,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
 
     public string Help {
       get {
-        return "Netflix";
+        return "Netflix <local path prefix>";
       }
     }
 
