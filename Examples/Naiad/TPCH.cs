@@ -291,7 +291,7 @@ namespace Microsoft.Research.Naiad.Examples.TPCH {
         StreamWriter[] file_avg_yearly = new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_avg_yearly[i] = new StreamWriter(args[1] + "avg_yearly" + j + ".out");
+          file_avg_yearly[i] = new StreamWriter(args[1] + "/avg_yearly" + j + ".out");
         }
         avg_yearly.Subscribe((i, l) => { foreach (var element in l) file_avg_yearly[i - minThreadId].WriteLine(element); });
 
