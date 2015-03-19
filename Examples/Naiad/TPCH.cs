@@ -255,7 +255,7 @@ namespace Microsoft.Research.Naiad.Examples.TPCH {
       yield return new IntDouble(key, aggValue / cntValue * 0.2);
     }
 
-    public string Usage {get {return "";} }
+    public string Usage {get {return "<local path prefix>";} }
 
     public void Execute(string[] args) {
       using (var computation = Naiad.NewComputation.FromArgs(ref args)) {
@@ -291,13 +291,13 @@ namespace Microsoft.Research.Naiad.Examples.TPCH {
         StreamWriter[] file_avg_yearly = new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_avg_yearly[i] = new StreamWriter("/tmp/home/icg27/avg_yearly/avg_yearly" + j + ".out");
+          file_avg_yearly[i] = new StreamWriter(args[1] + "avg_yearly" + j + ".out");
         }
         avg_yearly.Subscribe((i, l) => { foreach (var element in l) file_avg_yearly[i - minThreadId].WriteLine(element); });
 
         computation.Activate();
-        part_input.OnCompleted("/tmp/home/icg27/part/part" + computation.Configuration.ProcessID + ".in");
-        lineitem_input.OnCompleted("/tmp/home/icg27/lineitem/lineitem" + computation.Configuration.ProcessID + ".in");
+        part_input.OnCompleted(args[1] + "/part/part" + computation.Configuration.ProcessID + ".in");
+        lineitem_input.OnCompleted(args[1] + "/lineitem/lineitem" + computation.Configuration.ProcessID + ".in");
         computation.Join();
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           file_avg_yearly[i].Close();
@@ -307,7 +307,7 @@ namespace Microsoft.Research.Naiad.Examples.TPCH {
 
     public string Help {
       get {
-        return "TPCH";
+        return "TPCH <local path prefix>";
       }
     }
 
