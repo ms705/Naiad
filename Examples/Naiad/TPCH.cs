@@ -296,8 +296,8 @@ namespace Microsoft.Research.Naiad.Examples.TPCH {
         avg_yearly.Subscribe((i, l) => { foreach (var element in l) file_avg_yearly[i - minThreadId].WriteLine(element); });
 
         computation.Activate();
-        part_input.OnCompleted(args[1] + "/part/part" + computation.Configuration.ProcessID + ".in");
-        lineitem_input.OnCompleted(args[1] + "/lineitem/lineitem" + computation.Configuration.ProcessID + ".in");
+        part_input.OnCompleted(args[1] + "/part" + computation.Configuration.ProcessID + ".in");
+        lineitem_input.OnCompleted(args[1] + "/lineitem" + computation.Configuration.ProcessID + ".in");
         computation.Join();
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           file_avg_yearly[i].Close();
