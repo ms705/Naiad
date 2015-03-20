@@ -259,7 +259,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
           StreamWriter[] file_out = new StreamWriter[computation.Configuration.WorkerCount];
           for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
             int j = minThreadId + i;
-            file_out[i] = new StreamWriter(args[1] + "/prediction" + j + ".out");
+            file_out[i] = new StreamWriter(args[4] + "/prediction" + j + ".out");
           }
 
           var prediction = predicted.Max(row => row.First.t,
@@ -276,7 +276,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
         } else {
           var prediction = predicted.Max(row => row.First.t,
                                          row => row.Second);
-          StreamWriter file_out = new StreamWriter(args[1] + "/prediction.out");
+          StreamWriter file_out = new StreamWriter(args[4] + "/prediction.out");
           if (computation.Configuration.ProcessID == 0) {
             prediction.Subscribe(l => { foreach (var element in l) file_out.WriteLine(element); });
             computation.Activate();
