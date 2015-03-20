@@ -221,7 +221,7 @@ namespace Microsoft.Research.Naiad.Examples.PageRank
       }
     }
 
-    public string Usage {get {return "";} }
+    public string Usage {get {return "<graph> <local path prefix>";} }
 
     public void Execute(string[] args) {
       using (var computation = NewComputation.FromArgs(ref args)) {
@@ -256,14 +256,14 @@ namespace Microsoft.Research.Naiad.Examples.PageRank
         StreamWriter[] file_pr = new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_pr[i] = new StreamWriter("pr" + j + ".out");
+          file_pr[i] = new StreamWriter(args[1] + "/pagerank_" + j + ".out");
         }
 
         pr.Subscribe((i, l) => { foreach (var element in l) file_pr[i - minThreadId].WriteLine(element); });
 
         computation.Activate();
-        edges_input.OnCompleted("/tmp/home/icg27/edges/edges" + computation.Configuration.ProcessID + ".in");
-        pr_input.OnCompleted("/tmp/home/icg27/pr/pr" + computation.Configuration.ProcessID + ".in");
+        edges_input.OnCompleted(args[2] + "/pagerank_" + args[1] + "_edges" + computation.Configuration.ProcessID + ".in");
+        pr_input.OnCompleted(args[2] + "/pagerank_" + args[1] + "_vertices" + computation.Configuration.ProcessID + ".in");
         computation.Join();
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           file_pr[i].Close();
@@ -273,7 +273,7 @@ namespace Microsoft.Research.Naiad.Examples.PageRank
 
     public string Help {
       get {
-        return "PageRank";
+        return "PageRank <graph> <local path prefix>";
       }
     }
 

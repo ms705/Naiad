@@ -136,7 +136,7 @@ namespace Microsoft.Research.Naiad.Examples.SSSP {
 //                 (id, costs) => MinCosts(id, costs));
     }
 
-    public string Usage {get {return "";} }
+    public string Usage {get {return "<graph> <local input path prefix>";} }
 
     public void Execute(string[] args) {
       using (var computation = Naiad.NewComputation.FromArgs(ref args)) {
@@ -159,14 +159,14 @@ namespace Microsoft.Research.Naiad.Examples.SSSP {
         StreamWriter[] file_out = new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_out[i] = new StreamWriter("/tmp/home/icg27/dij_vertices/dij_vertices" + j + ".out");
+          file_out[i] = new StreamWriter(args[2] + "/dij_vertices" + j + ".out");
         }
 
         vertices_in.Subscribe((i, l) => { foreach (var element in l) file_out[i - minThreadId].WriteLine(element); });
 
         computation.Activate();
-        edges.OnCompleted(args[1]);
-        vertices.OnCompleted(args[2]);
+        edges.OnCompleted(args[2] + "/sssp_" + args[1] + "_edges" + computation.Configuration.ProcessID + ".in");
+        vertices.OnCompleted(args[2] + "/sssp_" + args[1] + "_vertices" + computation.Configuration.ProcessID + ".in");
         computation.Join();
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           file_out[i].Close();
@@ -176,7 +176,7 @@ namespace Microsoft.Research.Naiad.Examples.SSSP {
 
     public string Help {
       get {
-        return "SSSP";
+        return "SSSP <graph> <local input path prefix>";
       }
     }
 
