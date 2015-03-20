@@ -256,7 +256,7 @@ namespace Microsoft.Research.Naiad.Examples.PageRank
         StreamWriter[] file_pr = new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_pr[i] = new StreamWriter(args[1] + "/pagerank_" + j + ".out");
+          file_pr[i] = new StreamWriter(args[2] + "/pagerank_" + j + ".out");
         }
 
         pr.Subscribe((i, l) => { foreach (var element in l) file_pr[i - minThreadId].WriteLine(element); });
