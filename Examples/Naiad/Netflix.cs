@@ -207,15 +207,15 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
       }
     }
 
-    public string Usage {get {return "ratings_file movies_file year";} }
+    public string Usage {get {return "ratings_file movies_file year [optimized]";} }
 
     public void Execute(string[] args) {
       using (var computation = NewComputation.FromArgs(ref args)) {
         var movies = new BatchedDataSource<string>();
         var ratings = new BatchedDataSource<string>();
         bool optimized = true;
-        if (args.Length == 5) {
-          optimized = Convert.ToBoolean(args[4]);
+        if (args.Length == 6) {
+          optimized = Convert.ToBoolean(args[5]);
         }
         long year = Convert.ToInt64(args[3]);
 
@@ -259,7 +259,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
           StreamWriter[] file_out = new StreamWriter[computation.Configuration.WorkerCount];
           for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
             int j = minThreadId + i;
-            file_out[i] = new StreamWriter("/tmp/home/icg27/prediction/prediction" + j + ".out");
+            file_out[i] = new StreamWriter(args[1] + "/prediction" + j + ".out");
           }
 
           var prediction = predicted.Max(row => row.First.t,
@@ -267,8 +267,8 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
             .Subscribe((i, l) => { foreach (var element in l) file_out[i - minThreadId].WriteLine(element); });
 
           computation.Activate();
-          movies.OnCompleted(args[2]);
-          ratings.OnCompleted(args[1]);
+          movies.OnCompleted(args[4] + "/" + args[2]);
+          ratings.OnCompleted(args[4] + "/" + args[1]);
           computation.Join();
           for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
             file_out[i].Close();
@@ -276,12 +276,12 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
         } else {
           var prediction = predicted.Max(row => row.First.t,
                                          row => row.Second);
-          StreamWriter file_out = new StreamWriter("/tmp/home/icg27/prediction/prediction.out");
+          StreamWriter file_out = new StreamWriter(args[1] + "/prediction.out");
           if (computation.Configuration.ProcessID == 0) {
             prediction.Subscribe(l => { foreach (var element in l) file_out.WriteLine(element); });
             computation.Activate();
-            movies.OnCompleted(args[2]);
-            ratings.OnCompleted(args[1]);
+            movies.OnCompleted(args[4] + "/" + args[2]);
+            ratings.OnCompleted(args[4] + "/" + args[1]);
           } else {
             computation.Activate();
             movies.OnCompleted();
@@ -295,7 +295,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
 
     public string Help {
       get {
-        return "Netflix <local path prefix>";
+        return "Netflix <movies file> <ratings file> <year> <local path prefix>";
       }
     }
 
