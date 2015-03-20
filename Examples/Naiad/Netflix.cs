@@ -207,7 +207,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
       }
     }
 
-    public string Usage {get {return "ratings_file movies_file year [optimized]";} }
+    public string Usage {get {return "year ratings_file movies_file [optimized]";} }
 
     public void Execute(string[] args) {
       using (var computation = NewComputation.FromArgs(ref args)) {
@@ -217,7 +217,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
         if (args.Length == 6) {
           optimized = Convert.ToBoolean(args[5]);
         }
-        long year = Convert.ToInt64(args[3]);
+        long year = Convert.ToInt64(args[1]);
 
         var movies_in = computation.NewInput(movies)
           .SelectMany(file => ReadMovies(file));
@@ -267,8 +267,8 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
             .Subscribe((i, l) => { foreach (var element in l) file_out[i - minThreadId].WriteLine(element); });
 
           computation.Activate();
-          movies.OnCompleted(args[4] + "/" + args[2]);
-          ratings.OnCompleted(args[4] + "/" + args[1]);
+          movies.OnCompleted(args[4] + "/" + args[3]);
+          ratings.OnCompleted(args[4] + "/" + args[2]);
           computation.Join();
           for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
             file_out[i].Close();
@@ -280,8 +280,8 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
           if (computation.Configuration.ProcessID == 0) {
             prediction.Subscribe(l => { foreach (var element in l) file_out.WriteLine(element); });
             computation.Activate();
-            movies.OnCompleted(args[4] + "/" + args[2]);
-            ratings.OnCompleted(args[4] + "/" + args[1]);
+            movies.OnCompleted(args[4] + "/" + args[3]);
+            ratings.OnCompleted(args[4] + "/" + args[2]);
           } else {
             computation.Activate();
             movies.OnCompleted();
@@ -295,7 +295,7 @@ namespace Microsoft.Research.Naiad.Examples.Netflix
 
     public string Help {
       get {
-        return "Netflix <movies file> <ratings file> <year> <local path prefix>";
+        return "Netflix <year> <movies file> <ratings file> <local path prefix>";
       }
     }
 
