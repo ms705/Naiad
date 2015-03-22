@@ -32,12 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkGenerator", "Frameworks\WorkGenerator\WorkGenerator.csproj", "{EBA3D350-41EB-474C-AED9-9CFD1F809DE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebHdfsSupport", "Frameworks\WebHdfsSupport\WebHdfsSupport.csproj", "{5CFC93F6-68C3-45B5-92FA-43F8626EC482}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "frameworks\Storage\Storage.csproj", "{0DCA9543-FF9D-48D6-9748-A966DC39C35D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdfsSupport", "frameworks\HdfsSupport\HdfsSupport.csproj", "{66D2A00E-F889-4B2F-9C40-04A32278FB86}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
