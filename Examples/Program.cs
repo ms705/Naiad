@@ -1,13 +1,13 @@
 /*
  * Naiad ver. 0.5
  * Copyright (c) Microsoft Corporation
- * All rights reserved. 
+ * All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0 
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * THIS CODE IS PROVIDED ON AN *AS IS* BASIS, WITHOUT WARRANTIES OR
  * CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT
@@ -63,6 +63,11 @@ namespace Microsoft.Research.Naiad.Examples
             examples.Add("lookup", new KeyValueLookup.KeyValueLookup());
             examples.Add("connectedcomponents", new ConnectedComponents.ConnectedComponents());
 
+            examples.Add("netflix", new Netflix.Netflix());
+            examples.Add("pagerank", new PageRank.PageRank());
+            examples.Add("tpch", new TPCH.TPCH());
+            examples.Add("sssp", new SSSP.SSSP());
+
             // two examples capable of stressing Naiad's performance
             examples.Add("benchmark-throughput", new Throughput.Throughput());
             examples.Add("benchmark-latency", new Latency.Latency());
@@ -73,7 +78,7 @@ namespace Microsoft.Research.Naiad.Examples
             examples.Add("dd-wordcount", new DifferentialDataflow.WordCount());
             examples.Add("dd-searchindex", new DifferentialDataflow.SearchIndex());
             examples.Add("dd-graphcoloring", new DifferentialDataflow.GraphColoring());
-            
+
             // some GraphLINQ examples
             examples.Add("graphlinq-reachability", new Examples.GraphLINQ.Reachability());
             examples.Add("graphlinq-pagerank", new Examples.GraphLINQ.PageRank());

@@ -35,25 +35,40 @@ using Microsoft.Research.Naiad.Dataflow;
 
 namespace Microsoft.Research.Naiad.Frameworks.Reduction
 {
-    internal static class ExtensionMethods
-    {
-        
 
-        internal static Stream<TState, TTime> LocalReduce<TReducer, TState, TInput, TOutput, TTime>(this Stream<TInput, TTime> stream, Func<TReducer> factory, string name)
+
+    public abstract class ReducerBase {
+
+      public abstract ReducerBase Add(ReducerBase other);
+
+      public static ReducerBase operator +(ReducerBase l, ReducerBase r) {
+        return l.Add(r);
+      }
+
+    }
+
+    public interface IAddable<T> {
+      T Add(T other);
+    }
+
+    public static class ExtensionMethods
+    {
+
+        public static Stream<TState, TTime> LocalReduce<TReducer, TState, TInput, TOutput, TTime>(this Stream<TInput, TTime> stream, Func<TReducer> factory, string name)
             where TReducer : IReducer<TState, TInput, TOutput>
             where TTime : Time<TTime>
         {
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalReduceVertex<TReducer, TState, TInput, TOutput, TTime>(i, v, factory), null, null, name);
         }
 
-        internal static Stream<TOutput, TTime> LocalCombine<TReducer, TState, TInput, TOutput, TTime>(this Stream<TState, TTime> stream, Func<TReducer> factory, string name)
+        public static Stream<TOutput, TTime> LocalCombine<TReducer, TState, TInput, TOutput, TTime>(this Stream<TState, TTime> stream, Func<TReducer> factory, string name)
             where TReducer : IReducer<TState, TInput, TOutput>
             where TTime : Time<TTime>
         {
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalCombineVertex<TReducer, TState, TInput, TOutput, TTime>(i, v, factory), null, null, name);
         }
 
-        internal static Stream<Pair<TKey, TState>, TTime> LocalReduce<TReducer, TState, TValue, TOutput, TKey, TInput, TTime>(
+        public static Stream<Pair<TKey, TState>, TTime> LocalReduce<TReducer, TState, TValue, TOutput, TKey, TInput, TTime>(
             this Stream<TInput, TTime> stream, Func<TInput, TKey> key, Func<TInput, TValue> val, Func<TReducer> factory, string name,
             Expression<Func<TInput, int>> inPlacement, Expression<Func<Pair<TKey, TState>, int>> outPlacement)
             where TReducer : IReducer<TState, TValue, TOutput>
@@ -62,7 +77,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalKeyedReduceVertex<TReducer, TState, TValue, TOutput, TKey, TInput, TTime>(i, v, key, val, factory), inPlacement, outPlacement, name);
         }
 
-        internal static Stream<Pair<K, X>, T> LocalTimeReduce<A, X, R, S, K, I, T>(
+        public static Stream<Pair<K, X>, T> LocalTimeReduce<A, X, R, S, K, I, T>(
             this Stream<I, T> stream, Func<I, K> key, Func<I, R> val, Func<A> factory, string name,
             Expression<Func<I, int>> inPlacement, Expression<Func<Pair<K, X>, int>> outPlacement)
             where A : IReducer<X, R, S>
@@ -71,7 +86,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalTimeKeyedReduceVertex<A, X, R, S, K, I, T>(i, v, key, val, factory), inPlacement, outPlacement, name);
         }
 
-        internal static Stream<Pair<K, X>, T> LocalReduce<A, X, R, S, K, I, T>(
+        public static Stream<Pair<K, X>, T> LocalReduce<A, X, R, S, K, I, T>(
             this Stream<I, T> stream, Func<I, K> key, Func<I, R> val, Func<A> factory, string name)
             where A : IReducer<X, R, S>
             where T : Time<T>
@@ -79,7 +94,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return LocalReduce<A, X, R, S, K, I, T>(stream, key, val, factory, name, null, null);
         }
 
-        internal static Stream<Pair<K, S>, T> LocalCombine<A, X, R, S, K, T>(
+        public static Stream<Pair<K, S>, T> LocalCombine<A, X, R, S, K, T>(
             this Stream<Pair<K, X>, T> stream, Func<A> factory, string name,
             Expression<Func<Pair<K, S>, int>> outPlacement)
             where A : IReducer<X, R, S>
@@ -95,7 +110,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalKeyedCombineVertex<A, X, R, S, K, T>(i, v, factory), inPlacement, outPlacement, name);
         }
 
-        internal static Stream<Pair<K, S>, T> LocalTimeCombine<A, X, R, S, K, T>(
+        public static Stream<Pair<K, S>, T> LocalTimeCombine<A, X, R, S, K, T>(
             this Stream<Pair<K, X>, T> stream, Func<A> factory, string name,
             Expression<Func<Pair<K, S>, int>> outPlacement)
             where A : IReducer<X, R, S>
@@ -110,7 +125,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return Foundry.NewUnaryStage(stream, (i, v) => new LocalTimeKeyedCombineVertex<A, X, R, S, K, T>(i, v, factory), inPlacement, outPlacement, name);
         }
 
-        internal static Stream<Pair<K, S>, T> LocalCombine<A, X, R, S, K, T>(
+        public static Stream<Pair<K, S>, T> LocalCombine<A, X, R, S, K, T>(
             this Stream<Pair<K, X>, T> stream, Func<A> factory, string name)
             where A : IReducer<X, R, S>
             where T : Time<T>
@@ -118,7 +133,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return stream.LocalCombine<A, X, R, S, K, T>(factory, name, null);
         }
 
-        internal static Stream<Pair<K, S>, T> Reduce<A, X, R, S, K, I, T>(
+        public static Stream<Pair<K, S>, T> Reduce<A, X, R, S, K, I, T>(
             this Stream<I, T> stream, Func<I, K> key, Func<I, R> val, Func<A> factory, string name)
             where A : IReducer<X, R, S>
             where T : Time<T>
@@ -128,7 +143,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
                 LocalCombine<A, X, R, S, K, T>(factory, name + "Combine", x => x.First.GetHashCode());
         }
 
-        internal static Stream<R, T> Broadcast<R, T>(this Stream<R, T> stream)
+        public static Stream<R, T> Broadcast<R, T>(this Stream<R, T> stream)
             where R : Cloneable<R>
             where T : Time<T>
         {
@@ -159,7 +174,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return collectable.UnaryExpression(null, xs => xs.Select(x => x.Second), "Select");
         }
 
-        internal static Stream<S, T> BroadcastReduce<A, X, R, S, T>(this Stream<R, T> stream, Func<A> factory, string name)
+        public static Stream<S, T> BroadcastReduce<A, X, R, S, T>(this Stream<R, T> stream, Func<A> factory, string name)
             where A : IReducer<X, R, S>
             where X : Cloneable<X>
             where T : Time<T>
@@ -167,7 +182,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
             return stream.LocalReduce<A, X, R, S, T>(factory, name + "Reduce").Broadcast().LocalCombine<A, X, R, S, T>(factory, name + "Combine");
         }
 
-        internal static Stream<X, T> BroadcastReduce<A, X, T>(this Stream<X, T> stream, Func<A> factory, string name)
+        public static Stream<X, T> BroadcastReduce<A, X, T>(this Stream<X, T> stream, Func<A> factory, string name)
             where A : IReducer<X, X, X>
             where X : Cloneable<X>
             where T : Time<T>
@@ -179,7 +194,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
 
 namespace Microsoft.Research.Naiad.Frameworks.Reduction
 {
-    internal interface IReducer<TState, TInput, TOutput>
+    public interface IReducer<TState, TInput, TOutput>
     {
         // Accumulate an object of type R
         void Add(TInput r);
@@ -202,7 +217,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
 
     // Placeholder type for generics that support reduction, used when
     // reduction is not needed
-    internal struct DummyReducer<X> : IReducer<X, X, X>
+    public struct DummyReducer<X> : IReducer<X, X, X>
     {
         public void Add(X x)
         {
@@ -235,7 +250,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class Aggregation<X, R, S> : IReducer<X, R, S>
+    public class Aggregation<X, R, S> : IReducer<X, R, S>
     {
         public void InitialAdd(R other)
         {
@@ -289,7 +304,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         X value;
     }
 
-    internal class Aggregation<T> : Aggregation<T, T, T>
+    public class Aggregation<T> : Aggregation<T, T, T>
     {
         public Aggregation(Func<T, T, T> c)
             : base(c, x => x, c, x => x)
@@ -297,7 +312,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal struct CountReducer<S> : IReducer<Int64, S, Int64>
+    public struct CountReducer<S> : IReducer<Int64, S, Int64>
     {
         public void InitialAdd(S s) { value = 1; }
         public void Add(S t) { ++value; }
@@ -308,7 +323,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private Int64 value;
     }
 
-    internal struct IntSumReducer : IReducer<Int64, Int64, Int64>
+    public struct IntSumReducer : IReducer<Int64, Int64, Int64>
     {
         public void InitialAdd(Int64 r) { value = r; }
         public void Add(Int64 r) { value += r; }
@@ -319,7 +334,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private Int64 value;
     }
 
-    internal struct FloatSumReducer : IReducer<float, float, float>
+    public struct FloatSumReducer : IReducer<float, float, float>
     {
         public void InitialAdd(float r) { value = r; }
         public void Add(float r) { value += r; }
@@ -330,7 +345,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private float value;
     }
 
-    internal struct DoubleSumReducer : IReducer<double, double, double>
+    public struct DoubleSumReducer : IReducer<double, double, double>
     {
         public void InitialAdd(double r) { value = r; }
         public void Add(double r) { value += r; }
@@ -341,7 +356,36 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private double value;
     }
 
-    internal struct MinReducer<T> : IReducer<T, T, T> where T : IComparable<T>
+    public struct GenericReducer<T> : IReducer<T, T, T> where T : IAddable<T> {
+
+      public void InitialAdd(T r) {
+        value = r;
+      }
+
+      public void Add(T r) {
+        value.Add(r);
+      }
+
+      public void InitialCombine(T other) {
+        value = other;
+      }
+
+      public void Combine(T other) {
+        value.Add(other);
+      }
+
+      public T State() {
+        return value;
+      }
+
+      public T Value() {
+        return value;
+      }
+
+      private T value;
+    }
+
+    public struct MinReducer<T> : IReducer<T, T, T> where T : IComparable<T>
     {
         public void InitialAdd(T r) { value = r; }
         public void Add(T r) { value = r.CompareTo(value) < 0 ? r : value; }
@@ -352,7 +396,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private T value;
     }
 
-    internal struct MaxReducer<T> : IReducer<T, T, T> where T : IComparable<T>
+    public struct MaxReducer<T> : IReducer<T, T, T> where T : IComparable<T>
     {
         public void InitialAdd(T r) { value = r; }
         public void Add(T r) { value = r.CompareTo(value) > 0 ? r : value; }
@@ -363,7 +407,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         private T value;
     }
 
-    internal class LocalReduceVertex<A, X, R, S, T> : UnaryVertex<R, X, T>
+    public class LocalReduceVertex<A, X, R, S, T> : UnaryVertex<R, X, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -413,7 +457,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class LocalCombineVertex<A, X, R, S, T> : UnaryVertex<X, S, T>
+    public class LocalCombineVertex<A, X, R, S, T> : UnaryVertex<X, S, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -463,7 +507,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class LocalKeyedReduceVertex<A, X, R, S, K, I, T> : UnaryVertex<I, Pair<K, X>, T>
+    public class LocalKeyedReduceVertex<A, X, R, S, K, I, T> : UnaryVertex<I, Pair<K, X>, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -558,7 +602,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class LocalTimeKeyedReduceVertex<A, X, R, S, K, I, T> : UnaryVertex<I, Pair<K, X>, T>
+    public class LocalTimeKeyedReduceVertex<A, X, R, S, K, I, T> : UnaryVertex<I, Pair<K, X>, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -644,7 +688,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
     }
 
 
-    internal class LocalKeyedCombineVertex<A, X, R, S, K, T> : UnaryVertex<Pair<K, X>, Pair<K, S>, T>
+    public class LocalKeyedCombineVertex<A, X, R, S, K, T> : UnaryVertex<Pair<K, X>, Pair<K, S>, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -739,7 +783,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class LocalTimeKeyedCombineVertex<A, X, R, S, K, T> : UnaryVertex<Pair<K, X>, Pair<K, S>, T>
+    public class LocalTimeKeyedCombineVertex<A, X, R, S, K, T> : UnaryVertex<Pair<K, X>, Pair<K, S>, T>
         where A : IReducer<X, R, S>
         where T : Time<T>
     {
@@ -819,14 +863,14 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal interface Cloneable<T>
+    public interface Cloneable<T>
     {
         // Return a copy suitable for broadcasting. Can be a shallow copy if the object
         // is known to be immutable
         T MakeCopy();
     }
 
-    internal class BroadcastSendVertex<R, T> : UnaryVertex<R, Pair<int, R>, T>
+    public class BroadcastSendVertex<R, T> : UnaryVertex<R, Pair<int, R>, T>
         where R : Cloneable<R>
         where T : Time<T>
     {
@@ -863,7 +907,7 @@ namespace Microsoft.Research.Naiad.Frameworks.Reduction
         }
     }
 
-    internal class BroadcastForwardVertex<R, T> : UnaryVertex<Pair<int, R>, Pair<int, R>, T>
+    public class BroadcastForwardVertex<R, T> : UnaryVertex<Pair<int, R>, Pair<int, R>, T>
         where R : Cloneable<R>
         where T : Time<T>
     {
