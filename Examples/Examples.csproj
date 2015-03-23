@@ -81,6 +81,7 @@
     <Compile Include="GraphLINQ\Reachability.cs" />
     <Compile Include="Naiad\ConnectedComponents.cs" />
     <Compile Include="Naiad\KeyValueLookup.cs" />
+    <Compile Include="Naiad\Join.cs" />
     <Compile Include="Naiad\Latency.cs" />
     <Compile Include="Naiad\Netflix.cs" />
     <Compile Include="Naiad\PageRank.cs" />
