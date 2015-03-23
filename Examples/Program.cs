@@ -63,6 +63,7 @@ namespace Microsoft.Research.Naiad.Examples
             examples.Add("lookup", new KeyValueLookup.KeyValueLookup());
             examples.Add("connectedcomponents", new ConnectedComponents.ConnectedComponents());
 
+            examples.Add("join", new Join.Join());
             examples.Add("netflix", new Netflix.Netflix());
             examples.Add("pagerank", new PageRank.PageRank());
             examples.Add("tpch", new TPCH.TPCH());
