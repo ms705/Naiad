@@ -108,12 +108,12 @@ namespace Microsoft.Research.Naiad.Examples.Join
           new StreamWriter[computation.Configuration.WorkerCount];
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           int j = minThreadId + i;
-          file_output[i] = new StreamWriter(args[1] + "/join_output" + j + ".out");
+          file_output[i] = new StreamWriter(args[1] + "/join" + j + ".out");
         }
         output.Subscribe((i, l) => { foreach (var element in l) file_output[i - minThreadId].WriteLine(element); });
         computation.Activate();
-        left_input.OnCompleted(args[1] + "/left" + computation.Configuration.ProcessID + ".in");
-        right_input.OnCompleted(args[1] + "/right" + computation.Configuration.ProcessID + ".in");
+        left_input.OnCompleted(args[1] + "/join_left" + computation.Configuration.ProcessID + ".in");
+        right_input.OnCompleted(args[1] + "/join_right" + computation.Configuration.ProcessID + ".in");
         computation.Join();
         for (int i = 0; i < computation.Configuration.WorkerCount; ++i) {
           file_output[i].Close();
