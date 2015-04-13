@@ -64,9 +64,14 @@ namespace Microsoft.Research.Naiad.Examples
             examples.Add("connectedcomponents", new ConnectedComponents.ConnectedComponents());
 
             examples.Add("join", new Join.Join());
+            examples.Add("joinlj", new JoinLJ.JoinLJ());
+            examples.Add("kmeans", new KMeans.KMeans());
             examples.Add("netflix", new Netflix.Netflix());
             examples.Add("pagerank", new PageRank.PageRank());
+            examples.Add("project", new Project.Project());
+            examples.Add("readtest", new ReadTest.ReadTest());
             examples.Add("tpch", new TPCH.TPCH());
+            examples.Add("shopper", new Shopper.Shopper());
             examples.Add("sssp", new SSSP.SSSP());
 
             // two examples capable of stressing Naiad's performance
@@ -79,7 +84,7 @@ namespace Microsoft.Research.Naiad.Examples
             examples.Add("dd-wordcount", new DifferentialDataflow.WordCount());
             examples.Add("dd-searchindex", new DifferentialDataflow.SearchIndex());
             examples.Add("dd-graphcoloring", new DifferentialDataflow.GraphColoring());
-
+            examples.Add("dd-netflix", new DifferentialDataflow.Netflix());
             // some GraphLINQ examples
             examples.Add("graphlinq-reachability", new Examples.GraphLINQ.Reachability());
             examples.Add("graphlinq-pagerank", new Examples.GraphLINQ.PageRank());

@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="DifferentialDataflow\ConnectedComponents.cs" />
     <Compile Include="DifferentialDataflow\GraphColoring.cs" />
+    <Compile Include="DifferentialDataflow\Netflix.cs" />
     <Compile Include="DifferentialDataflow\SearchIndex.cs" />
     <Compile Include="DifferentialDataflow\StronglyConnectedComponents.cs" />
     <Compile Include="DifferentialDataflow\WordCount.cs" />
@@ -82,9 +83,14 @@
     <Compile Include="Naiad\ConnectedComponents.cs" />
     <Compile Include="Naiad\KeyValueLookup.cs" />
     <Compile Include="Naiad\Join.cs" />
+    <Compile Include="Naiad\JoinLJ.cs" />
+    <Compile Include="Naiad\KMeans.cs" />
     <Compile Include="Naiad\Latency.cs" />
     <Compile Include="Naiad\Netflix.cs" />
     <Compile Include="Naiad\PageRank.cs" />
+    <Compile Include="Naiad\Project.cs" />
+    <Compile Include="Naiad\ReadTest.cs" />
+    <Compile Include="Naiad\Shopper.cs" />
     <Compile Include="Naiad\SSSP.cs" />
     <Compile Include="Naiad\Throughput.cs" />
     <Compile Include="Naiad\TPCH.cs" />
