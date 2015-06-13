@@ -127,11 +127,11 @@ interfaces we expect will change.
 Some information about programming examples, the state of the code, known
 problems, and fixes and features is available at the project web page:
 
-    http://research.microsoft.com/Naiad/,
+http://research.microsoft.com/Naiad/,
 
 or at the related blog:
 
-    http://bigdataatsvc.wordpress.com/
+http://bigdataatsvc.wordpress.com/
 
 Note, however, that the original authors no longer work at Microsoft Research,
 and thus the website and the blog are not currently kept up to date. 
